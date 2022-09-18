@@ -1,0 +1,123 @@
+body::before{
+  content: '';
+  position: fixed;
+  background: rgba(0,0,0,.5);
+  top: 0;
+  left: -100vw;
+  bottom: 0;
+  width: 100vw;
+  transition: left 0.3s;
+  z-index:2;
+}
+
+body.nav-open::before{
+  left: 0;
+}
+
+header h1{
+  display: none;
+}
+header form{
+  padding: 7px 3px;
+  gap: 0;
+}
+
+header form input{
+  width: 120px;
+}
+
+header ul{
+  gap: 2px;
+}
+
+#menu-open{
+  display: block;
+  width: 32px;
+  height: 32px;
+  margin-right: 2px;
+  background: url(/assets/iconos/menu-open.svg) center/24px no-repeat;
+}
+
+.dark .nav-header,
+.dark #menu-open{
+  filter: invert(1);
+}
+
+nav{
+  position: fixed;
+  top: 0;
+  left: -100vw;
+  width: 80vw;
+  bottom: 0;
+  z-index: 3;
+  background: white;
+  box-shadow: 2px 0 5px rgba(0,0,0,.3);
+  overflow-y: auto;
+  transition: left 0.3s;
+}
+
+.dark nav{
+  background: var(--background-body);
+  box-shadow: none;
+  border-right: 2px solid rgba(243,229,171,.5);
+}
+
+nav a{
+  margin-right: 0.5em;
+}
+
+nav.open{
+  left: 0;
+}
+
+nav.open::before{
+  left: 0;
+}
+
+.floating-modal{
+  position: static;
+  width: 94%;
+  margin: -.9em auto 1em auto;
+  border-radius: 0 0 .5em .5em;
+}
+
+.modal {
+  align-items: flex-start;
+}
+.modal .sub-modal{
+  width: 80vw;
+  margin-top: 3em;
+}
+
+.nav-header{
+  padding: .75em 0;
+  display: flex;
+}
+
+
+
+.nav-header-close{
+  background-image: url(/assets/iconos/cerrar.svg);
+}
+main{
+  margin-right: 0;
+}
+nav .new{
+  width: auto;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+nav li a.selected{
+  margin-right: 0;
+  border-radius: 0;
+}
+
+#sugeridos{
+  display: none;
+}
+
+#files table{
+  width: 96%;
+  margin: auto;
+}

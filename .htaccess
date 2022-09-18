@@ -1,0 +1,8 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f  
+RewriteCond %{REQUEST_FILENAME} !-d  
+RewriteRule ^([a-z]+)$ /index.php?s=$1 [L]
+
+RewriteRule ^post\-([a-z]+)$  /acciones/$1.php
+
+RewriteRule ^get\-([a-z]+)$  /assets/ajax/$1.php

@@ -1,0 +1,123 @@
+body.dark{
+  --background-body: #120805;
+  --border-color: var(--logo-text-secondary);
+  --background-color-box: #313131;
+  --menu-hover-background: rgba(219,196,188,.8);
+
+  --logo-text-primary: #6d4c41;
+  --logo-text-secondary:  #3e2723;
+
+  --menu-selected-background: var(--logo-text-secondary);
+}
+
+body.dark .icon{
+  position: relative;
+  filter:invert(1);
+  opacity: .95;
+}
+
+body.dark .icon::after{
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  /*
+  background: yellow;
+  mix-blend-mode:color;
+  */
+}
+
+.dark nav .new{
+  background-color: var(--logo-text-primary);
+}
+
+.dark nav .new:not(:hover){
+  background-image: url(/assets/iconos-dark/crear.svg);
+}
+
+.dark .modal-aside,
+.dark nav span,
+.dark nav a.selected,
+.dark nav a{
+  color: #F3E5AB;
+}
+
+.dark nav a:hover{
+  color: black;
+}
+
+
+
+.dark nav .my-drive:not(:hover){
+  background-image: url(/assets/iconos-dark/mi-unidad.svg);
+}
+
+.dark nav .shared:not(:hover){
+  background-image: url(/assets/iconos-dark/compartidos-conmigo.svg);
+}
+
+.dark nav .recent:not(:hover){
+  background-image: url(/assets/iconos-dark/recientes.svg);
+}
+
+.dark nav .stars:not(:hover){
+  background-image: url(/assets/iconos-dark/destacado.svg);
+}
+
+.dark nav .bin:not(:hover){
+  background-image: url(/assets/iconos-dark/papelera.svg);
+}
+
+.dark nav .cloud:not(:hover){
+  background-image: url(/assets/iconos-dark/almacenamiento.svg); 
+}
+
+.dark nav .folder:not(:hover){
+  background-image: url(/assets/iconos-dark/carpeta.svg);
+}
+
+.dark .floating-modal{
+  background-color: #6D4C41;
+}
+
+.dark .floating-modal div a.folder-add:not(:hover){
+  background-image: url(/assets/iconos-dark/crear-carpeta.svg);
+}
+
+.dark .floating-modal div a.file-add:not(:hover){
+  background-image: url(/assets/iconos-dark/subir-archivos.svg);
+}
+
+
+.dark table th, 
+.dark table td{
+  color: white;
+}
+
+.dark .modal-aside{
+  background-color: #6D4C41;
+}
+
+.dark .modal-aside button,
+.dark .modal-aside h2,
+.dark .modal-aside h3{
+  color: white;
+}
+
+.dark .modal-aside button{
+  background-color: #50392E;
+}
+
+body.dark .icon.modal-close{
+  filter:invert(0);
+}
+
+.dark #files table td span.folder{
+  background-image: url(/assets/iconos-dark/carpeta.svg);
+}
+
+.dark #files table td span.rar{
+  background-image: url(/assets/iconos-dark/filetype-zip.svg);
+}
