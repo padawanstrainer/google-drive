@@ -1,5 +1,11 @@
 <?php 
-$limite_storage = 5; //siempre en megas...
+define( 'DS', DIRECTORY_SEPARATOR );
+define( 'ROOT', dirname( __DIR__ ) );
+define( 'CONFIG', ROOT . DS . 'config' );
+
+require CONFIG . DS . 'funciones.php';
+
+$limite_storage = 15; //siempre en megas...
 
 $dsn = 'mysql:dbname=twitch_drive;host=localhost';
 $usuario = 'root';
@@ -32,61 +38,3 @@ $total_megas = round($size['TOTAL'] / 1024 / 1024,2);
 
 
 
-function getDirectory( $order = 1, $parametro = NULL, $avanzados = NULL ){
-  global $conexion;
-  $id = $_SESSION['ID'];
-  if( $order == 3 ){
-    $orderby = 'FECHA_MODIFICADO DESC';
-  }elseif( $order == 2 ){
-    $orderby = 'USUARIO ASC';
-  }else{
-    $orderby = 'NOMBRE ASC';   
-  }
-
-  $recursos = [];
-  $values = [];
-  $values[] = $id;
-
-  $consulta = "SELECT r.*, IF( u.ID = $id, 'Yo', IFNULL( CONCAT( u.NOMBRE, ' ' , u.APELLIDO ), SUBSTRING_INDEX( EMAIL, '@', 1 ) ) ) AS USUARIO FROM recursos AS r JOIN usuarios AS u ON u.ID = r.FKUSUARIO WHERE FKUSUARIO=? ";
-
-  if( !is_null($parametro) && !empty($parametro)){
-    $consulta.= " AND r.NOMBRE LIKE ? ";
-    $values[] = "%$parametro%";
-  }
-
-  if( isset($avanzados['date-max'] ) && ! empty($avanzados['date-max'] ) ){
-    $consulta .= " AND FECHA_MODIFICADO <= ?";
-    $values[] = $avanzados["date-max"]." 23:59:59";
-  }
-
-  if( isset($avanzados['date-min'] ) && ! empty($avanzados['date-min'] )){
-    $consulta .= " AND FECHA_MODIFICADO >= ?";
-    $values[] = $avanzados["date-min"]." 00:00:00";
-  }
-
-  if( isset($_POST['ubicacion'] ) ){
-    $consulta .= " AND ( "; 
-    $opciones = [];
-    if( in_array( 'papelera', $_POST['ubicacion'] ) ){
-      $opciones[] = " ELIMINADO = '1' ";
-    }
-    if( in_array( 'destacados', $_POST['ubicacion'] ) ){
-      $opciones[] = " DESTACADO = '1' ";
-    }
-    if( in_array( 'mi unidad', $_POST['ubicacion'] ) ){
-      $opciones[] = " ELIMINADO = '0' ";
-    } 
-    $consulta .= implode( " OR " , $opciones ); 
-    $consulta.= " ) ";
-  }
-
-  $consulta .= " ORDER BY ES_DIRECTORIO DESC, $orderby";
-
-  $stmt= $conexion->prepare($consulta);
-  $stmt->execute($values);
-
-  while( $r = $stmt->fetch(PDO::FETCH_ASSOC) ){
-    $recursos[] = $r;
-  }
-  return $recursos;
-}

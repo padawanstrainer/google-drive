@@ -35,3 +35,21 @@ btn_cerrar_avanzado.addEventListener('click', hide_busqueda_avanzada );
 
 
 scannear_items( );
+
+const ul_directorios = D.id('directory-structure');
+for( let item in directorios ){
+  const cantHijos = Object.keys(directorios[item].HIJOS).length;
+  const classHijos = cantHijos > 0 ? 'subitems collapsed' : '';
+
+  const list_item = D.create('li', { className: classHijos, style: '--data-level: 1' });
+  list_item.dataset.level = 1;
+  list_item.dataset.path = directorios[item].ID;
+
+  const expandir = D.create('span', { className:'folder-expandir', innerHTML: '-', onclick: toggle_collapse } );
+  const vinculo = D.create('a', { href: `?folder=${directorios[item].ID}`, innerHTML: directorios[item].NOMBRE, className: 'folder' } );
+
+  expandir.dataset.parent = directorios[item].ID;
+  if( cantHijos > 0 ) D.append( expandir, list_item ); 
+  D.append( vinculo, list_item) ;
+  D.append( list_item, ul_directorios );
+}

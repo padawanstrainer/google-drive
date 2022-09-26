@@ -181,8 +181,11 @@ nav .new{
   box-shadow: 1px 1px 3px rgba(95,99,104,.7);
   padding-left: calc(var(--menu-padding-left) - .5em);
 }
+nav li.subitems {
+  position: relative;
+}
 
-nav li.subitems > a::before{
+nav li.subitems > .folder-expandir{
   content: ' ';
   display: inline-block;
   width: 15px;
@@ -192,9 +195,11 @@ nav li.subitems > a::before{
   left: 2px;
   top: .9em;
   transition: .2s;
+  z-index: 2;
+  text-indent: -500px
 }
 
-nav li.subitems.expanded > a::before{
+nav li.subitems.expanded > .folder-expandir{
   transform: rotate(90deg);
 }
 
@@ -251,7 +256,7 @@ nav .subitems ul > li > a{
   background-position: calc( var(--icon-size) * var(--data-level) ) center;
 }
 
-nav .subitems ul > li > a::before{
+nav .subitems ul > li > .folder-expandir{
   left: calc( ( var(--icon-size) * var(--data-level) ) - 15px );
 }
 

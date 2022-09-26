@@ -8,10 +8,14 @@ const arrayModales = [
 
 const modal_crear_carpeta = e =>{
   e.stopPropagation( );
+  const params = new URLSearchParams(document.location.search);
+  const folder = params.get("folder"); 
+
   const ventana = D.create('div', { className: 'modal' });
   const sub = D.create('form', { className: 'sub-modal', action: '/post-folder', method: 'post' });
   const titulo = D.create('h2', { innerHTML: 'Carpeta nueva' });
   const input = D.create('input', { type: 'text', name: 'carpeta', autofocus: true });
+  const folder_input = D.create('input', { type: 'hidden', name: 'folder', value: folder } );
 
   const div = D.create('div', { className: 'modal-buttons' });
   const aceptar = D.create('button', { innerHTML: 'Crear', type: 'submit' });
@@ -19,7 +23,7 @@ const modal_crear_carpeta = e =>{
     ventana.remove( );
   } });
 
-  D.append([cancelar, aceptar], div);
+  D.append([cancelar, aceptar, folder_input], div);
   D.append([titulo, input, div], sub);
   D.append(sub, ventana);
   D.append(ventana);
@@ -32,11 +36,13 @@ const modal_subir_archivo = e =>{
   const file_input = D.create('input', { type: 'file', name: 'files[]', multiple: true, onchange: e => {
       const modal = D.create('div', { className: 'modal-uploads'});
       D.append(modal);
+      const params = new URLSearchParams(document.location.search);
+      const folder = params.get("folder"); 
   
       Array.from(file_input.files).forEach( f => {
-        console.log( f );
         const FD = new FormData( );
         FD.append( 'archivo', f );
+        FD.append( 'folder', folder );
         FD.append( 'lastM', f.lastModified );
 
         const div = D.create('div',{ className: 'uploading-file'});
@@ -274,4 +280,43 @@ const show_busqueda_avanzada = e => {
 
 const hide_busqueda_avanzada = e => {
   D.id('form-avanzado').style.display = 'none';
+}
+
+
+const toggle_collapse = function(e){
+  const list_item_tocado = this.parentNode;
+  const parent = this.dataset.parent;
+  const current_path = list_item_tocado.dataset.path;
+
+  if( sub_lista = list_item_tocado.querySelector( 'ul') ){
+    sub_lista.remove( );
+    list_item_tocado.classList.remove( 'expanded' );
+  }else{
+    const sub_ul = D.create('ul');
+    const full_path = current_path.split( '|' );
+
+    let hijos = directorios;
+    for( p of full_path ){ hijos = hijos[p].HIJOS; }
+
+    const data_level = parseInt(list_item_tocado.dataset.level) + 1;
+
+    for(let id in hijos){
+      const cant_hijos = Object.keys(hijos[id].HIJOS).length;
+      const classHijos = cant_hijos > 0 ? 'subitems collapsed' : '';
+
+      const list_item = D.create('li',{ className: classHijos, style: `--data-level: ${data_level}` });
+      list_item.dataset.level = data_level;
+      list_item.dataset.path = current_path + '|' + hijos[id].ID;
+    
+      const expandir = D.create('span', { className:'folder-expandir', innerHTML: '-', onclick: toggle_collapse } );
+      const vinculo = D.create('a',{ className: 'folder', innerHTML: hijos[id].NOMBRE, href: `/?folder=${hijos[id].ID}` } );
+
+
+      if( cant_hijos > 0 ) D.append( expandir, list_item );
+      D.append( vinculo, list_item );
+      D.append( list_item, sub_ul );
+    }
+    D.append( sub_ul, list_item_tocado );
+    list_item_tocado.classList.add( 'expanded' );
+  }
 }

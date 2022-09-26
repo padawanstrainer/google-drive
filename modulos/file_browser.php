@@ -7,24 +7,10 @@
       <li id="new-elements"><a href='#' class='new'>Nuevo</a></li>
       <li class='subitems expanded' onclick="this.classList.toggle('expanded')">
         <a href='#' class='my-drive selected'>Mi unidad</a>
-        <ul>
-          <li class='subitems expanded' style="--data-level: 1">
-            <a href='#' class='folder'>Carpeta 1</a>
-            <ul>
-              <li class='subitems expanded'>
-                <a href='#' class='folder' style="--data-level: 2">SubCarpeta 1</a>
-                <ul>
-                  <li>
-                    <a href='#' class='folder' style="--data-level: 3">SubSubCarpeta 1</a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li><a href='#' class='folder'>Carpeta 2</a></li>
+        <ul id="directory-structure">
         </ul>
       </li>
-      <li><a href='#' class='shared'>Compartidos conmigo</a></li>
+      <li id="shared"><a href='#' class='shared'>Compartidos conmigo</a></li>
       <li><a href='#' class='recent'>Recientes</a></li>
       <li><a href='#' class='stars'>Destacados</a></li>
       <li><a href='#' class='bin'>Papelera</a></li>
@@ -77,12 +63,20 @@
 
     <section id="files">
       <?php
+        if( isset($_GET['folder'] ) ){
+          $busqueda['folder'] =$_GET['folder'];
+        }
         $recursos = getDirectory(1,$parametro,$busqueda);
         include 'modulos/ver_tabla.php' ;
       ?>
     </section>
 
   </main>
+
+  <script>
+    const directorios = <?php echo json_encode(getFolderList( ));
+    ?>;
+  </script>
   <script src="/assets/js/dom.js"></script>
   <script src="/assets/js/funciones.js"></script>
   <script src="/assets/js/app.js"></script>
