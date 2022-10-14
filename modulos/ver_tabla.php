@@ -22,30 +22,13 @@
     ?>
       <tr data-file='<?php echo $r['URL']; ?>' data-name='<?php echo $r['NOMBRE']; ?>' data-folder="<?php echo $r['ES_DIRECTORIO']; ?>">
         <td><span<?php echo $style; ?>>
-          <?php if( $r['ES_DIRECTORIO'] == 1 ) echo "<a href='?folder=$r[ID]'>"; ?>
+          <?php //if( $r['ES_DIRECTORIO'] == 1 ) echo "<a href='?folder=$r[ID]'>"; ?>
           <?php echo $r['NOMBRE']; ?>
-          <?php if( $r['ES_DIRECTORIO'] == 1 ) echo "</a>"; ?>
+          <?php //if( $r['ES_DIRECTORIO'] == 1 ) echo "</a>"; ?>
         </span></td>
         <td><?php echo $r['USUARIO']; ?></td>
         <td><?php echo $r['FECHA_MODIFICADO']; ?></td>
       </tr>
       <?php endforeach; ?>
-    <!--
-      <tr>
-        <td><span class='folder'>Filename</span></td>
-        <td>Yo</td>
-        <td>12 sept 2022</td>
-      </tr>
-      <tr>
-        <td><span class='rar'>Filename</span></td>
-        <td>Yo</td>
-        <td>12 sept 2022</td>
-      </tr>
-      <tr>
-        <td><span style='background-image: url("/storage/osito.png")'>Osito</span></td>
-        <td>Yo</td>
-        <td>12 sept 2022</td>
-      </tr>
-    -->
     </tbody>
   </table>

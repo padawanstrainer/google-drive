@@ -7,7 +7,7 @@ include( "../config/setup.php");
 $id = $_SESSION['ID'];
 $name = $_POST['carpeta'];
 $parent = $_POST['folder'];
-$url = uniqid( ); 
+$url = uniqid( );
 $size = 0;
 
 $consulta = "INSERT INTO recursos SET NOMBRE=?, URL=?, TAMANIO=?, FECHA_ALTA=NOW(),FKUSUARIO=?,ES_DIRECTORIO='1', FKPARENT=NULLIF(?,''), VISIBILIDAD='privado'";

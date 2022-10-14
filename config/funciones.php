@@ -17,7 +17,7 @@ function getDirectory( $order = 1, $parametro = NULL, $avanzados = NULL ){
   $consulta = "SELECT r.*, IF( u.ID = $id, 'Yo', IFNULL( CONCAT( u.NOMBRE, ' ' , u.APELLIDO ), SUBSTRING_INDEX( EMAIL, '@', 1 ) ) ) AS USUARIO FROM recursos AS r JOIN usuarios AS u ON u.ID = r.FKUSUARIO WHERE FKUSUARIO=? ";
 
   if( isset($avanzados['folder']) && !empty($avanzados['folder']) ){
-    $consulta.= " AND FKPARENT = ? ";
+    $consulta.= " AND FKPARENT = (SELECT ID FROM recursos WHERE URL = ? )";
     $values[] = $avanzados['folder'];
   }else{
     $consulta.= " AND FKPARENT IS NULL ";
@@ -93,4 +93,23 @@ function getFolderList( ){
   }
 
   return $directorios;
+}
+
+
+//$path es una ruta adentro de los recursos del zip
+function addFolderToZip( $zip, $url, $path ){
+  global $conexion;
+
+  $idUsuario = $_SESSION['ID'] ?? 0;
+  $consulta = "SELECT NOMBRE, URL, ES_DIRECTORIO FROM recursos WHERE ELIMINADO='0' AND FKPARENT=(SELECT ID FROM recursos WHERE URL = ? ) AND FKUSUARIO= ?";
+  $stmt = $conexion->prepare($consulta);
+  $stmt->execute([ $url, $idUsuario ]);
+  foreach( $stmt->fetchAll(PDO::FETCH_ASSOC) as $a ){
+    if( $a['ES_DIRECTORIO'] == 1 ){
+        //si es true es una sub-sub-sub-sub-carpeta
+        addFolderToZip( $zip, $a['URL'], $path.$a['NOMBRE'].'/' );
+    }else{
+      $zip->addFile( dirname(__DIR__). "/storage/$a[URL]", $path . $a['NOMBRE'] );
+    }
+  }
 }

@@ -6,7 +6,7 @@
     <ul>
       <li id="new-elements"><a href='#' class='new'>Nuevo</a></li>
       <li class='subitems expanded' onclick="this.classList.toggle('expanded')">
-        <a href='#' class='my-drive selected'>Mi unidad</a>
+        <a href='/' class='my-drive selected'>Mi unidad</a>
         <ul id="directory-structure">
         </ul>
       </li>
@@ -27,7 +27,7 @@
   <main>
     <div class='header-tools'>
       <h2><a href='#'>Carpeta actual</a></h2>
-      <a href='javascript:void(0)' class='icon download'>Download</a>
+      <a href='javascript:void(0)' class='icon download hidden'>Download</a>
       <a href='#' class='icon toggle tabla'>Toggle grilla</a>
       <a href='#' class='icon file-info'>File info</a>
     </div>
@@ -79,4 +79,5 @@
   </script>
   <script src="/assets/js/dom.js"></script>
   <script src="/assets/js/funciones.js"></script>
+  <script src="/assets/js/keyboard.js"></script>
   <script src="/assets/js/app.js"></script>

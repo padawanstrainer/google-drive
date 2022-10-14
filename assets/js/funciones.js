@@ -28,10 +28,11 @@ const modal_crear_carpeta = e =>{
   D.append(sub, ventana);
   D.append(ventana);
 
-  //input.focus( );
+  input.focus( );
 
   if( modal = D.query('.floating-modal' ) ){ D.remove(modal); }
 };
+
 const modal_subir_archivo = e =>{
   const file_input = D.create('input', { type: 'file', name: 'files[]', multiple: true, onchange: e => {
       const modal = D.create('div', { className: 'modal-uploads'});
@@ -184,45 +185,78 @@ const close_nav = e =>{
 const toggle_darkmode = e => {
   document.body.classList.toggle('dark');
 }
-
-const escuchar_escape = ( ) => {
-  arrayModales.forEach( selector => {
-    const objetivos = D.queryAll(selector);
-    Array.from(objetivos).forEach( o => { o.remove(); } );
-  } );
-}
-
-const escuchar_tecla = e =>{
-  switch(e.key){
-    case 'Escape': escuchar_escape( ); break;
-  }
-}
-
 const click_eliminar_modales = e => {
   const selectores = arrayModales.join(',');
   const modalParent = e.target.closest(selectores);
   if( ! modalParent ) escuchar_escape( );
 }
 
-const prepare_download = e => {
-  if( e.currentTarget.dataset.folder == 1 ){
-    return false;
+const descargar_multiples_recursos = ( ) => {
+  const items = D.queryAll('.para-descargar');
+  const FD = new FormData( );
+  Array.from(items).forEach( item => {
+    FD.append( 'archivos[]', item.dataset.file );
+  } );
+  fetch( '/post-zip', { method: 'POST', body: FD } )
+  .then(response => response.blob())
+  .then(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "zip-castordrive.zip";
+      document.body.appendChild(a); 
+      a.click();    
+      a.remove();        
+  });
+}
+
+const download_attributes = (boton, filename, downloadname ) => {
+  boton.href = '/storage/'+filename;
+  boton.download = downloadname;
+  boton.removeEventListener('click', descargar_multiples_recursos);
+}
+
+const open_direct_resource = item => {
+  const is_folder = item.dataset.folder == '1';
+  if( is_folder ){
+    location.href = `?folder=${item.dataset.file}`; 
   }
+}
+
+const open_resource = e => {
+  open_direct_resource( e.currentTarget );
+}
+
+const prepare_download = e => {
+  const boton = D.query('.icon.download');
+  boton.classList.remove('hidden');
 
   if( e.ctrlKey ){
     e.currentTarget.classList.toggle('para-descargar');
+    const items = D.queryAll('.para-descargar');
+
+    if( items.length == 0 ){
+      boton.classList.add('hidden');
+    }else if( items.length == 1 ){
+      download_attributes( boton, items[0].dataset.file, items[0].dataset.name );
+    }else{
+      boton.href = 'javascript:void(0)';
+      boton.removeAttribute('download');
+      boton.addEventListener('click', descargar_multiples_recursos);
+    }
+
   }else{
     const items = D.queryAll('.para-descargar');
     Array.from(items).forEach(i => { i.classList.remove('para-descargar'); });
-    const boton = D.query('.icon.download');
-    boton.href = '/storage/'+e.currentTarget.dataset.file;
-    boton.download = e.currentTarget.dataset.name;
+    download_attributes( boton, e.currentTarget.dataset.file, e.currentTarget.dataset.name );
+    e.currentTarget.classList.add('para-descargar');
   }
 }
 
 const scannear_items = ( ) => {
   const items = D.queryAll( 'tbody > tr, #grid ul li' );
   Array.from(items).forEach( i => {
+    i.addEventListener('dblclick', open_resource ); 
     i.addEventListener('click', prepare_download );
   });
 }

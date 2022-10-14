@@ -19,7 +19,7 @@ menu_open.addEventListener('click', open_nav);
 const menu_close = D.query('.nav-header-close');
 menu_close.addEventListener('click', close_nav);
 
-window.addEventListener('keydown', escuchar_tecla);
+window.addEventListener('keyup', escuchar_tecla);
 document.body.addEventListener('click', click_eliminar_modales);
 
 const file_toggles = D.query('.toggle');
@@ -31,8 +31,6 @@ btn_avanzado.addEventListener('click', show_busqueda_avanzada );
 
 const btn_cerrar_avanzado = D.id('cerrar-avanzado');
 btn_cerrar_avanzado.addEventListener('click', hide_busqueda_avanzada ); 
-
-
 
 scannear_items( );
 
@@ -46,7 +44,7 @@ for( let item in directorios ){
   list_item.dataset.path = directorios[item].ID;
 
   const expandir = D.create('span', { className:'folder-expandir', innerHTML: '-', onclick: toggle_collapse } );
-  const vinculo = D.create('a', { href: `?folder=${directorios[item].ID}`, innerHTML: directorios[item].NOMBRE, className: 'folder' } );
+  const vinculo = D.create('a', { href: `?folder=${directorios[item].URL}`, innerHTML: directorios[item].NOMBRE, className: 'folder' } );
 
   expandir.dataset.parent = directorios[item].ID;
   if( cantHijos > 0 ) D.append( expandir, list_item ); 

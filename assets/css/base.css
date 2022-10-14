@@ -260,6 +260,10 @@ nav .subitems ul > li > .folder-expandir{
   left: calc( ( var(--icon-size) * var(--data-level) ) - 15px );
 }
 
+.download{
+  background: url(/assets/iconos/descargar.svg) center/var(--icon-size) no-repeat;
+}
+
 h2, h3{
   margin: 0;
   font-weight: normal;
@@ -399,7 +403,7 @@ main .header-tools h2 a:hover{
 }
 
 #files table tr.para-descargar{
-  background-color: lightyellow;
+  background-color: #EDE3D6;
 }
 
 #files table th{
@@ -413,6 +417,7 @@ main .header-tools h2 a:hover{
 #files table td{
   border-top: 1px solid var(--border-color);
   padding: .5em 0;
+  user-select: none;
 }
 
 #files table td span.folder{
@@ -772,6 +777,12 @@ main .header-tools h2 a:hover{
   background: url(/assets/iconos/orden-desc.svg) center/20px no-repeat;
   vertical-align: middle;
 }
+
+.hidden{
+  display: none !important;
+}
+
+
 #form-buscador{
   position: relative;
 }
