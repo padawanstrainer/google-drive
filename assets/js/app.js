@@ -1,5 +1,3 @@
-const D = new DOM( );
-
 const new_button = D.query('.new');
 new_button.addEventListener('click', modal_new_file);
 
@@ -27,6 +25,12 @@ file_toggles.addEventListener('click', toggle_grid);
 
 const btn_avanzado = D.id('btn-avanzado');
 btn_avanzado.addEventListener('click', show_busqueda_avanzada ); 
+
+const boton_del = D.query('.icon.delete');
+boton_del.addEventListener('click', eliminar_items );
+
+const boton_mv = D.query('.icon.move');
+boton_mv.addEventListener('click', mover_items );
 
 
 const btn_cerrar_avanzado = D.id('cerrar-avanzado');

@@ -13,12 +13,18 @@ function getDirectory( $order = 1, $parametro = NULL, $avanzados = NULL ){
   $recursos = [];
   $values = [];
   $values[] = $id;
+  $es_papelera = false;
 
   $consulta = "SELECT r.*, IF( u.ID = $id, 'Yo', IFNULL( CONCAT( u.NOMBRE, ' ' , u.APELLIDO ), SUBSTRING_INDEX( EMAIL, '@', 1 ) ) ) AS USUARIO FROM recursos AS r JOIN usuarios AS u ON u.ID = r.FKUSUARIO WHERE FKUSUARIO=? ";
 
   if( isset($avanzados['folder']) && !empty($avanzados['folder']) ){
-    $consulta.= " AND FKPARENT = (SELECT ID FROM recursos WHERE URL = ? )";
-    $values[] = $avanzados['folder'];
+    if( $avanzados['folder'] == 'papelera' ){
+      $es_papelera = true;
+      $consulta .= " AND ELIMINADO = '1' ";
+    }else{
+      $consulta.= " AND FKPARENT = (SELECT ID FROM recursos WHERE URL = ? )";
+      $values[] = $avanzados['folder'];
+    }
   }else{
     $consulta.= " AND FKPARENT IS NULL ";
   }
@@ -53,10 +59,11 @@ function getDirectory( $order = 1, $parametro = NULL, $avanzados = NULL ){
     } 
     $consulta .= implode( " OR " , $opciones ); 
     $consulta.= " ) ";
+  }else if( ! $es_papelera ){
+    $consulta .= " AND ELIMINADO = '0' ";
   }
 
   $consulta .= " ORDER BY ES_DIRECTORIO DESC, $orderby";
-
   $stmt= $conexion->prepare($consulta);
   $stmt->execute($values);
 

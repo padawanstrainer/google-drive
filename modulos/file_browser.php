@@ -13,7 +13,7 @@
       <li id="shared"><a href='#' class='shared'>Compartidos conmigo</a></li>
       <li><a href='#' class='recent'>Recientes</a></li>
       <li><a href='#' class='stars'>Destacados</a></li>
-      <li><a href='#' class='bin'>Papelera</a></li>
+      <li><a href='/?folder=papelera' class='bin'>Papelera</a></li>
       <li class='divider'>
         <a href='#' class='cloud'>Almacenamiento</a>
         <div>
@@ -27,6 +27,8 @@
   <main>
     <div class='header-tools'>
       <h2><a href='#'>Carpeta actual</a></h2>
+      <a href='javascript:void(0)' class='icon move hidden'>Mover</a>
+      <a href='javascript:void(0)' class='icon delete hidden'>Borrar</a>
       <a href='javascript:void(0)' class='icon download hidden'>Download</a>
       <a href='#' class='icon toggle tabla'>Toggle grilla</a>
       <a href='#' class='icon file-info'>File info</a>
@@ -64,9 +66,9 @@
     <section id="files">
       <?php
         if( isset($_GET['folder'] ) ){
-          $busqueda['folder'] =$_GET['folder'];
+          $busqueda['folder'] = $_GET['folder'];
         }
-        $recursos = getDirectory(1,$parametro,$busqueda);
+        $recursos = getDirectory(DEFAULT_ORDER_BY,$parametro,$busqueda);
         include 'modulos/ver_tabla.php' ;
       ?>
     </section>

@@ -264,6 +264,14 @@ nav .subitems ul > li > .folder-expandir{
   background: url(/assets/iconos/descargar.svg) center/var(--icon-size) no-repeat;
 }
 
+.delete{
+  background: url(/assets/iconos/papelera.svg) center/var(--icon-size) no-repeat;
+}
+
+.move{
+  background: url(/assets/iconos/mover.svg) center/var(--icon-size) no-repeat;
+}
+
 h2, h3{
   margin: 0;
   font-weight: normal;

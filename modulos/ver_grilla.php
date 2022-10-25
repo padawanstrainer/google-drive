@@ -5,7 +5,7 @@
       ?>
       <li style='background-image: url("/storage/<?php echo $archivo; ?>")' data-file='<?php echo $r['URL']; ?>'   data-name='<?php echo $r['NOMBRE']; ?>' data-folder="<?php echo $r['ES_DIRECTORIO']; ?>">
         <div>
-          <span><?php echo $r['NOMBRE']; ?></span>
+          <span><?php echo $r['NOMBRE'].' - XXXXX - '. $r['ELIMINADO']; ?></span>
         </div>
       </li>
     <?php endforeach; ?>

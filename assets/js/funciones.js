@@ -1,3 +1,5 @@
+let uploading_files = 0;
+const D = new DOM( );
 const _v = 'javascript:void(0)';
 const arrayModales = [
   '.modal',
@@ -5,6 +7,20 @@ const arrayModales = [
   '.modal-usuario',
   '.modal-aside'
 ];
+
+const reloadFileList = ( ) => {
+  const formato = D.query('.icon.toggle' ).classList.contains('tabla') ? 'tabla': 'grilla';
+  populate_grid( formato );
+}
+
+const checkUploadComplete = ( ) => {
+  if( uploading_files == 0 ){
+    if( icono = D.id('modal-upload-close-icon') ){
+      icono.classList.add('visible');
+    }
+    reloadFileList( );
+  }
+}
 
 const modal_crear_carpeta = e =>{
   e.stopPropagation( );
@@ -33,12 +49,27 @@ const modal_crear_carpeta = e =>{
   if( modal = D.query('.floating-modal' ) ){ D.remove(modal); }
 };
 
+
 const modal_subir_archivo = e =>{
   const file_input = D.create('input', { type: 'file', name: 'files[]', multiple: true, onchange: e => {
-      const modal = D.create('div', { className: 'modal-uploads'});
-      D.append(modal);
+      let modal = D.query('.modal-uploads' );
+      const plural = file_input.files.length > 1 ? 's' : '';
+
+      if( ! modal ){
+        modal = D.create('div', { className: 'modal-uploads'});
+        D.append(modal);
+
+        const div_titulo = D.create('div', { className: 'modal-titulo' } );
+        const titulo = D.create('h2', { innerHTML: 'Subiendo archivo' + plural } );
+        const cerrar = D.create('a', { id: 'modal-upload-close-icon', href: _v, innerHTML: 'x', onclick: function( ){ modal.remove( ); } } );
+        D.append( [titulo, cerrar], div_titulo );
+        D.append( div_titulo, modal );
+      }
       const params = new URLSearchParams(document.location.search);
       const folder = params.get("folder"); 
+
+
+      uploading_files += file_input.files.length;
   
       Array.from(file_input.files).forEach( f => {
         const FD = new FormData( );
@@ -59,6 +90,8 @@ const modal_subir_archivo = e =>{
           progreso.style.width = Math.ceil(e.loaded * 100 / e.total) + 'px';
         }
         ajax.onload = function( e ){
+          uploading_files--;
+          checkUploadComplete( );
           const rta = JSON.parse(ajax.responseText);
           if( ! rta.status ){
             nombre.style.color= 'red';
@@ -67,16 +100,7 @@ const modal_subir_archivo = e =>{
           }
         }
         ajax.send( FD );
-        /*
-
-        fetch( '/post-uploads', { method: 'POST', body: FD } ).
-        then( r => r.json( ) ).
-        then( j => { console.log( j ); } );
-        */
       });
-  
-
-
   } } );
 
   file_input.click( );
@@ -185,6 +209,7 @@ const close_nav = e =>{
 const toggle_darkmode = e => {
   document.body.classList.toggle('dark');
 }
+
 const click_eliminar_modales = e => {
   const selectores = arrayModales.join(',');
   const modalParent = e.target.closest(selectores);
@@ -227,42 +252,83 @@ const open_resource = e => {
   open_direct_resource( e.currentTarget );
 }
 
-const prepare_download = e => {
-  const boton = D.query('.icon.download');
-  boton.classList.remove('hidden');
+const prepare_actions = e => {
+  const boton_dwl = D.query('.icon.download');
+  boton_dwl.classList.remove('hidden');
+  boton_del.classList.remove('hidden');
+  boton_mv.classList.remove('hidden');
 
   if( e.ctrlKey ){
     e.currentTarget.classList.toggle('para-descargar');
     const items = D.queryAll('.para-descargar');
 
     if( items.length == 0 ){
-      boton.classList.add('hidden');
+      boton_dwl.classList.add('hidden');
+      boton_del.classList.add('hidden');
+      boton_mv.classList.add('hidden');
     }else if( items.length == 1 ){
-      download_attributes( boton, items[0].dataset.file, items[0].dataset.name );
+      download_attributes( boton_dwl, items[0].dataset.file, items[0].dataset.name );
     }else{
-      boton.href = 'javascript:void(0)';
-      boton.removeAttribute('download');
-      boton.addEventListener('click', descargar_multiples_recursos);
+      boton_dwl.href = 'javascript:void(0)';
+      boton_dwl.removeAttribute('download');
+      boton_dwl.addEventListener('click', descargar_multiples_recursos);
     }
 
+  //Acá seleccioné un solo recurso, no tengo el ctrl presionado.
   }else{
     const items = D.queryAll('.para-descargar');
     Array.from(items).forEach(i => { i.classList.remove('para-descargar'); });
-    download_attributes( boton, e.currentTarget.dataset.file, e.currentTarget.dataset.name );
+    download_attributes( boton_dwl, e.currentTarget.dataset.file, e.currentTarget.dataset.name );
     e.currentTarget.classList.add('para-descargar');
   }
 }
+
+const eliminar_items = ( e ) =>{
+  const items = D.queryAll('.para-descargar');
+  const nombres = Array.from(items).map( item => item.dataset.file );
+  const params = new URLSearchParams(document.location.search);
+  const folder = params.get("folder"); 
+
+  const FD = new FormData( );
+  FD.append( 'items', JSON.stringify(nombres) );
+  FD.append( 'folder', folder );
+
+  fetch( '/post-delete', { method: 'POST', body: FD } )
+    .then( rta => rta.json( ) )
+    .then( j => {
+      reloadFileList( );
+    } );
+//  console.log( nombres );
+}
+
+const mover_items = ( e ) =>{
+
+}
+
 
 const scannear_items = ( ) => {
   const items = D.queryAll( 'tbody > tr, #grid ul li' );
   Array.from(items).forEach( i => {
     i.addEventListener('dblclick', open_resource ); 
-    i.addEventListener('click', prepare_download );
+    i.addEventListener('click', prepare_actions );
   });
 }
 
-const toggle_grid = e => {
+const populate_grid = formato => {
   const div = D.id('files');
+  const FD = new FormData( );
+  const params = new URLSearchParams(document.location.search);
+  const folder = params.get("folder"); 
+
+  const array = { folder: folder }
+  FD.append( 'formato', formato );
+  FD.append( 'filtros', JSON.stringify( array ) );
+  fetch( '/post-grid', { method: 'POST', body: FD } ). 
+  then( r => r.text( ) ). 
+  then( t =>{ div.innerHTML = t; scannear_items( ) } );
+}
+
+const toggle_grid = e => {
   let formato = '';
   if( e.target.classList.contains('tabla') ){
     formato = 'grilla';
@@ -271,12 +337,7 @@ const toggle_grid = e => {
     formato = 'tabla';
     e.target.classList.replace('grilla','tabla');
   }
- 
-  const FD = new FormData( );
-  FD.append( 'formato', formato );
-  fetch( '/post-grid', { method: 'POST', body: FD } ). 
-  then( r => r.text( ) ). 
-  then( t =>{ div.innerHTML = t; scannear_items( ) } );
+  populate_grid( formato );
 }
 
 const getFiltros = ( ) =>{
@@ -343,7 +404,7 @@ const toggle_collapse = function(e){
       list_item.dataset.path = current_path + '|' + hijos[id].ID;
     
       const expandir = D.create('span', { className:'folder-expandir', innerHTML: '-', onclick: toggle_collapse } );
-      const vinculo = D.create('a',{ className: 'folder', innerHTML: hijos[id].NOMBRE, href: `/?folder=${hijos[id].ID}` } );
+      const vinculo = D.create('a',{ className: 'folder', innerHTML: hijos[id].NOMBRE, href: `/?folder=${hijos[id].URL}` } );
 
 
       if( cant_hijos > 0 ) D.append( expandir, list_item );

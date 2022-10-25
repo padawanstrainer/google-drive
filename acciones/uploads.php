@@ -8,7 +8,15 @@ $id = $_SESSION['ID'];
 $name = $_FILES['archivo']['name'];
 $lastM = round( $_POST['lastM'] / 1000 );
 $folder = $_POST['folder'];
+
 if( 'null' == $folder ) $folder = NULL;
+else{
+  $c = "SELECT ID FROM recursos WHERE URL = ? LIMIT 1";
+  $s = $conexion->prepare($c);
+  $s->execute( [$folder] );
+  $d = $s->fetch( PDO::FETCH_ASSOC );
+  $folder = $d['ID'];
+}
 
 $fecha_modificado = date( "Y-m-d H:i:s", $lastM ); 
 $ext = pathinfo($name, PATHINFO_EXTENSION);
